@@ -3,14 +3,15 @@
 //  ToDo List
 //
 //  Created by  Сергей on 14.05.2025.
-//
+// менеджер работы с загрузкой из сети
 
 import Foundation
 import UIKit
 
 final class DataManager{
+    
     static let shared = DataManager()
-    private var dataSourse : InfoModel?
+    var dataSourse : InfoModel?
     
     public func uploadToDOList(completion:  @escaping(Result<InfoModel, Error>) -> Void){
         

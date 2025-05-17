@@ -3,28 +3,34 @@
 //  ToDo List
 //
 //  Created by  Сергей on 12.05.2025.
-//
+// Основной контроллер
 
 import UIKit
 
 class MainViewController: UIViewController {
     
+    private let manager = CoreManager.shared
+    private  var toDoBase :ToDo?
     private var mytableView = UITableView()
-    public var dataSourseToDoList = [NewsTableViewCellModel]()
+    private let userDefaults = UserDefaults.standard
+    private var isLoadUrl = false
     public var dataSourse : InfoModel?
-    private var resultSearch  = [NewsTableViewCellModel]()
-   
+    
+    
     private let searchBar: UISearchBar = {
         let search = UISearchBar()
         search.placeholder = "Поиск заметок..."
+        
         return search
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        isLoadUrl = userDefaults.bool(forKey: "isLoadUrl")
         title = "ToDoList"
-        configuresearchBar()
-        uploadDataToDOList()
+        configureSearchBar()
+        uploadDataToDOListUrl()
+        manager.getAllToDoList()
         view.backgroundColor = .systemBackground
         view.addSubview(mytableView)
         creadtable()
@@ -38,45 +44,54 @@ class MainViewController: UIViewController {
         }
     }
     
-       private func uploadDataToDOList(){
-        dataSourseToDoList.removeAll()
-        DataManager.shared.uploadToDOList { result in
-            switch result {
-            case .success(let value):
-                for data in value.todos {
-                    let id = String(data.id)
-                    let todo = data.todo
-                    let comleted = data.completed
-                    //   let userId = String(data.userId)
+    private func uploadDataToDOListUrl(){
+        if !isLoadUrl{
+            DataManager.shared.uploadToDOList { [weak self] result in
+                switch result {
+                case .success(let value):
+                    for data in value.todos {
+                        let id = String(data.id)
+                        let todo = data.todo
+                        let comleted = data.completed
+                        let dataSourse: ToDoListModel = ToDoListModel(id: id, nameTitle: id, descriptionName: todo, dateString:Date(), statusSwitch: comleted)
+                        self?.manager.addToDoList(list: dataSourse)
+                    }
                     
-                    let dataSourse: NewsTableViewCellModel = NewsTableViewCellModel(titleName: id, descriptionName: todo, dateString:"", statusSwitch: comleted)
-                    self.dataSourseToDoList.append(dataSourse)
+                case .failure(_):
+                    let alert = Alert.shared.alertUserError()
+                    self?.present(alert, animated: true)
+                    break
                 }
-                
-            case .failure(_): break
-                
             }
-            DispatchQueue.main.async {
-                self.mytableView.reloadData()
-            }
-            
-            
+            userDefaults.set(true, forKey: "isLoadUrl")
         }
     }
-     
-    private func configuresearchBar(){
+    
+    
+    private func configureSearchBar(){
         navigationController?.navigationBar.topItem?.titleView = searchBar
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"),
                                                             style: .done,
                                                             target: self,
                                                             action: #selector(didTapNewToDoList))
-        searchBar.delegate = self
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"),
+                                                           style: .done,
+                                                           target: self,
+                                                           action: #selector(didTapAllToDoList))
         
+        searchBar.delegate = self
     }
     
     @objc private func didTapNewToDoList(){
         searchBar.resignFirstResponder()
         navigationController?.pushViewController(ToDoEditViewController(dataEdit: nil), animated: true)
+    }
+    
+    @objc private func didTapAllToDoList(){
+        manager.getAllToDoList()
+        DispatchQueue.main.async {
+            self.mytableView.reloadData()
+        }
     }
     
     private func creadtable(){
@@ -91,24 +106,38 @@ class MainViewController: UIViewController {
 extension MainViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dataSourseToDoList.count
+        manager.todoList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! MainCellVC
-        cell.configureCell(with: dataSourseToDoList[indexPath.row])
+        cell.configureCell(with: manager.todoList[indexPath.row])
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
+        return 60
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let data = dataSourseToDoList[indexPath.row]
+        let data = manager.todoList[indexPath.row]
         searchBar.resignFirstResponder()
         navigationController?.pushViewController(ToDoEditViewController(dataEdit: data), animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool{
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath){
+        
+        if editingStyle == .delete{
+            let toDoList =  manager.todoList[indexPath.row]
+            toDoList.deleteToDoList()
+            manager.todoList.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
     }
 }
 
@@ -119,19 +148,35 @@ extension MainViewController: UISearchBarDelegate{
             return
         }
         searchBar.resignFirstResponder()
-         resultSearch.removeAll()
-          self.searchToDo(query: text)
-
+        searchBar.text = nil
+        self.searchToDo(query: text)
+        
     }
+    
     func searchToDo(query: String){
-        for value in dataSourseToDoList{
-            if query == value.titleName{
+        var resultSearch = [ToDo]()
+        for value in manager.todoList{
+            guard let searchString = value.nameTitle?.lowercased() else{return}
+            if query == searchString{
                 resultSearch.append(value)
-                dataSourseToDoList = resultSearch
+                break
+            }else{
+                if  searchString.hasPrefix(query.lowercased()) {
+                    resultSearch.append(value)
+                }
+            }
+            
+        }
+        upDataUi(result: resultSearch)
+    }
+    
+    func upDataUi(result : [ToDo]){
+        if !result.isEmpty {
+            manager.todoList = result
+            DispatchQueue.main.async {
                 self.mytableView.reloadData()
             }
         }
     }
 }
 
-//name.hasPrefix(term.lowercased())

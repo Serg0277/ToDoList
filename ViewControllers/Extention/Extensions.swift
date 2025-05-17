@@ -3,7 +3,7 @@
 //  ToDoList
 //
 //  Created by  Сергей on 15.05.2025.
-//
+// Дополнительные расширеня для удобства работы
 
 import Foundation
 import UIKit
@@ -12,15 +12,6 @@ class Alert {
     
     static let shared = Alert()
     
-    static let dayFormatter: DateFormatter = {
-            let formatter = DateFormatter ()
-      //  formatter.dateFormat = "YYYY-MM-dd"
-        formatter.dateStyle = .medium
-            formatter.timeZone = .current
-            formatter.locale = .current
-           return formatter
-        }()
-
     // функция срабатывает когда возникает ошибка
     public func alertUserError () -> UIAlertController {
         /// функция срабатывает когда возникает ошибка регистрации
@@ -31,12 +22,12 @@ class Alert {
                                       style: .cancel,
                                       handler: nil))
         return alert
-  
+        
     }
     /// функция срабатывает когда возникает ошибка заполнения полей
     public func alertUserFieldsError () -> UIAlertController{
         let alert = UIAlertController(title: "Woops",
-                                      message: "Введите корректную информацию! ", preferredStyle: .alert)
+                                      message: "Введите корректную информаци или заполните все поля! ", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Отменить", style: .cancel, handler: nil))
         return alert
     }
@@ -72,3 +63,15 @@ extension UIView {
     }
 }
 
+extension DateFormatter {
+    
+    static let dayFormatter: DateFormatter = {
+        let formatter = DateFormatter ()
+        //  formatter.dateFormat = "YYYY-MM-dd"
+        formatter.dateStyle = .medium
+        formatter.timeZone = .current
+        formatter.locale = .current
+        return formatter
+    }()
+    
+}

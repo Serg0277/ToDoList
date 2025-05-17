@@ -3,7 +3,7 @@
 //  ToDo List
 //
 //  Created by  Сергей on 12.05.2025.
-//
+// Вью для редактирования заметки
 
 import UIKit
 
@@ -11,7 +11,7 @@ final class ToDoEditView: UIView {
     
     private let titleNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Номер задачи"
+        label.text = "Дела"
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 18, weight: .semibold)
         label.backgroundColor = .systemGray4
@@ -56,9 +56,10 @@ final class ToDoEditView: UIView {
         tv.font = .systemFont(ofSize: 16)
         return tv
     }()
+    
     private let dateLabel: UILabel = {
         let label = UILabel()
-        label.text = "Срок выполнения задачи"
+        label.text = "Дата регистрации"
         label.textAlignment = .center
         label.layer.cornerRadius = 12
         label.layer.masksToBounds = true
@@ -66,6 +67,7 @@ final class ToDoEditView: UIView {
         label.backgroundColor = .systemGray4
         return label
     }()
+    
     let dateTextField: UITextField = {
         let tf = UITextField()
         tf.autocorrectionType = .no
@@ -78,6 +80,12 @@ final class ToDoEditView: UIView {
         tf.leftViewMode = .always
         tf.backgroundColor = .secondarySystemBackground
         return tf
+    }()
+    
+    let statusSwitch: UISwitch = {
+        let mySwitch = UISwitch()
+        mySwitch.isOn = false
+        return mySwitch
     }()
     
     override init(frame: CGRect) {
@@ -99,14 +107,18 @@ final class ToDoEditView: UIView {
         addSubview(descriptionNameTextView)
         addSubview(dateLabel)
         addSubview(dateTextField)
+        addSubview(statusSwitch)
     }
     
-    func configureView(sourceData: NewsTableViewCellModel){
-        titleNameTextField.text = sourceData.titleName
+    func configureView(sourceData: ToDo){
+        titleNameTextField.text = sourceData.nameTitle
         descriptionNameTextView.text = sourceData.descriptionName
-        dateTextField.text = sourceData.dateString
+        if  let dateString = sourceData.dateString {
+            dateTextField.text =  DateFormatter.dayFormatter.string(from:dateString)
+        }
+        statusSwitch.isOn = sourceData.statusSwitch
     }
-   
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -145,6 +157,8 @@ final class ToDoEditView: UIView {
             y: dateLabel.frame.maxY + 5,
             width: frame.width * 0.45,
             height: frame.height * 0.1)
+        
+        statusSwitch.frame = CGRect(origin: CGPoint(x: frame.width * 0.85, y: dateLabel.frame.maxY + 5), size: .zero)
     }
 }
 

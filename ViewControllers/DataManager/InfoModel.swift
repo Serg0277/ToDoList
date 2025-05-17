@@ -3,7 +3,7 @@
 //  ToDo List
 //
 //  Created by  Сергей on 14.05.2025.
-//
+// модель доя данных загружаемых из сети
 
 import Foundation
 

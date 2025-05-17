@@ -3,32 +3,33 @@
 //  ToDo List
 //
 //  Created by  Сергей on 12.05.2025.
-//
+// Ячейка для таблицы отображает все задачи 
 
 import UIKit
 
-struct NewsTableViewCellModel {
-    var titleName: String
+struct ToDoListModel {
+    var id : String
+    var nameTitle: String
     var descriptionName: String
-    var dateString : String
+    var dateString : Date
     var statusSwitch : Bool
 }
 
 final class MainCellVC: UITableViewCell {
+    
+    private let manager = CoreManager.shared
     
     static let identifier = "cell"
     
     private let titleNameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .semibold)
-        //lable.numberOfLines = 0
         return label
     }()
     
     private let descriptionNameLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        //  label.adjustsFontSizeToFitWidth = true
         label.sizeToFit()
         label.font = .systemFont(ofSize: 14, weight: .ultraLight)
         return label
@@ -45,6 +46,7 @@ final class MainCellVC: UITableViewCell {
     private let statusSwitch: UISwitch = {
         let mySwitch = UISwitch()
         mySwitch.isOn = false
+        mySwitch.isEnabled = false
         return mySwitch
     }()
     
@@ -69,7 +71,7 @@ final class MainCellVC: UITableViewCell {
         dateLabel.text = nil
     }
     
-  
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -95,11 +97,13 @@ final class MainCellVC: UITableViewCell {
     }
     
     // MARK: - configure cell
-    public func configureCell(with model: NewsTableViewCellModel){
+    public func configureCell(with model: ToDo){
         
-        self.titleNameLabel.text = model.titleName
+        self.titleNameLabel.text = model.nameTitle
         self.descriptionNameLabel.text = model.descriptionName
-        self.dateLabel.text = model.dateString
+        if let date = model.dateString {
+            self.dateLabel.text =  DateFormatter.dayFormatter.string(from: date)
+        }
         self.statusSwitch.isOn = model.statusSwitch
     }
     

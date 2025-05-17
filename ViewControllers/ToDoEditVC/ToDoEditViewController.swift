@@ -9,10 +9,14 @@ import UIKit
 
 class ToDoEditViewController: UIViewController {
     
-    private var dataSourse : NewsTableViewCellModel?
+    private let manager = CoreManager.shared
+    private var toDo : ToDo?
+    
+    
+    // private var dataSourse : ToDoListModel?
     private let editView = ToDoEditView()
     
-    private let saveButton: UIButton = {
+    private var saveButton: UIButton = {
         let bt = UIButton(type: .system)
         bt.setTitle("Save", for: .normal)
         bt.titleLabel?.font = .systemFont(ofSize: 12.0, weight: .light)
@@ -24,8 +28,8 @@ class ToDoEditViewController: UIViewController {
         return bt
     }()
     
-    init(dataEdit : NewsTableViewCellModel?){
-        self.dataSourse = dataEdit
+    init(dataEdit : ToDo?){
+        self.toDo = dataEdit
         super.init(nibName: nil, bundle: nil)
         
     }
@@ -45,35 +49,52 @@ class ToDoEditViewController: UIViewController {
         setupKeyBoard ()
     }
     
-    @objc func didTapSaveButton(){
+    @objc  func didTapSaveButton(){
         editView.titleNameTextField.resignFirstResponder()
         editView.descriptionNameTextView.resignFirstResponder()
-        editView.dateTextField.resignFirstResponder()
+        // editView.dateTextField.resignFirstResponder()
         //проврка на корректность
-        guard let titleName = editView.titleNameTextField.text, let descriptionName = editView.descriptionNameTextView.text, let dateString = editView.dateTextField.text, !titleName.isEmpty, !descriptionName.isEmpty, !dateString.isEmpty
+        guard let titleName = editView.titleNameTextField.text, let descriptionName = editView.descriptionNameTextView.text, !titleName.isEmpty, !descriptionName.isEmpty
         else{
             //сделать сообщением
-            print ("Заполните все поля")
+            let messAlert = Alert.shared.alertUserFieldsError()
+            present(messAlert, animated: true)
             return
         }
-        
         //собираем данные и записыаем их в базу
-        if (dataSourse != nil) {
-            print("Edit")
-            var _ = NewsTableViewCellModel(titleName: editView.titleNameTextField.text ?? "", descriptionName: editView.descriptionNameTextView.text, dateString: editView.dateTextField.text ?? "", statusSwitch: dataSourse?.statusSwitch ?? false)
-        }else{
+        
+        if toDo == nil {
             print("New add")
+            let value = ToDoListModel(id: UUID().uuidString,
+                                      nameTitle: titleName,
+                                      descriptionName: descriptionName,
+                                      dateString: Date(),
+                                      statusSwitch: editView.statusSwitch.isOn )
+            manager.addToDoList(list: value)
+        }else{
+            var dateValue = Date()
+            print("Edit")
+            if let dateString =  editView.dateTextField.text {
+                dateValue = DateFormatter.dayFormatter.date(from:dateString) ?? Date()
+            }else{
+                dateValue = Date()
+            }
+            let value = ToDoListModel(id: UUID().uuidString,
+                                      nameTitle: titleName,
+                                      descriptionName: descriptionName,
+                                      dateString: dateValue,
+                                      statusSwitch: editView.statusSwitch.isOn )
+            toDo?.updateToDoList(newList: value)
         }
         
         //переходим на главный экран
         navigationController?.popViewController(animated: false)
     }
     private func getViewData(){
-        if let data = dataSourse{
+        if let data = toDo{
             editView.configureView(sourceData: data)
         }
     }
-   
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -112,7 +133,7 @@ class ToDoEditViewController: UIViewController {
     
     @objc private func handlKeyboardShow (notification: Notification){
         guard let value = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {return}
-      
+        
         let keybordHeight = value.cgRectValue.height
         let editViewHeight = editView.frame.height
         let difference = editViewHeight - keybordHeight

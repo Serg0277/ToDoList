@@ -19,6 +19,9 @@
 		C26391132DD61B1300DE5CA7 /* MainCellVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C263910B2DD61B1300DE5CA7 /* MainCellVC.swift */; };
 		C26391142DD61B1300DE5CA7 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C263910C2DD61B1300DE5CA7 /* MainViewController.swift */; };
 		C26391162DD6211B00DE5CA7 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26391152DD6211B00DE5CA7 /* Extensions.swift */; };
+		C26D2FD52DD72542006CE860 /* ToDo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26D2FD32DD72542006CE860 /* ToDo+CoreDataClass.swift */; };
+		C26D2FD62DD72542006CE860 /* ToDo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26D2FD42DD72542006CE860 /* ToDo+CoreDataProperties.swift */; };
+		C26D2FD92DD72672006CE860 /* CoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26D2FD82DD72672006CE860 /* CoreManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +39,9 @@
 		C263910B2DD61B1300DE5CA7 /* MainCellVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCellVC.swift; sourceTree = "<group>"; };
 		C263910C2DD61B1300DE5CA7 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		C26391152DD6211B00DE5CA7 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		C26D2FD32DD72542006CE860 /* ToDo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToDo+CoreDataClass.swift"; sourceTree = "<group>"; };
+		C26D2FD42DD72542006CE860 /* ToDo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToDo+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		C26D2FD82DD72672006CE860 /* CoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +58,7 @@
 		C26390D02DD6185200DE5CA7 = {
 			isa = PBXGroup;
 			children = (
+				C26D2FD72DD7254B006CE860 /* BD */,
 				C26391022DD61B1300DE5CA7 /* ViewControllers */,
 				C26390DB2DD6185200DE5CA7 /* ToDoList */,
 				C26390DA2DD6185200DE5CA7 /* Products */,
@@ -104,6 +111,7 @@
 			children = (
 				C26391072DD61B1300DE5CA7 /* DataManager.swift */,
 				C26391082DD61B1300DE5CA7 /* InfoModel.swift */,
+				C26D2FD82DD72672006CE860 /* CoreManager.swift */,
 			);
 			path = DataManager;
 			sourceTree = "<group>";
@@ -123,6 +131,15 @@
 				C26391152DD6211B00DE5CA7 /* Extensions.swift */,
 			);
 			path = Extention;
+			sourceTree = "<group>";
+		};
+		C26D2FD72DD7254B006CE860 /* BD */ = {
+			isa = PBXGroup;
+			children = (
+				C26D2FD32DD72542006CE860 /* ToDo+CoreDataClass.swift */,
+				C26D2FD42DD72542006CE860 /* ToDo+CoreDataProperties.swift */,
+			);
+			path = BD;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -198,11 +215,14 @@
 				C26390F62DD61AA200DE5CA7 /* SceneDelegate.swift in Sources */,
 				C26391102DD61B1300DE5CA7 /* DataManager.swift in Sources */,
 				C263910F2DD61B1300DE5CA7 /* ToDoEditView.swift in Sources */,
+				C26D2FD92DD72672006CE860 /* CoreManager.swift in Sources */,
 				C26391132DD61B1300DE5CA7 /* MainCellVC.swift in Sources */,
 				C26390DD2DD6185200DE5CA7 /* AppDelegate.swift in Sources */,
+				C26D2FD52DD72542006CE860 /* ToDo+CoreDataClass.swift in Sources */,
 				C26391162DD6211B00DE5CA7 /* Extensions.swift in Sources */,
 				C26391112DD61B1300DE5CA7 /* InfoModel.swift in Sources */,
 				C263910E2DD61B1300DE5CA7 /* ToDoEditViewController.swift in Sources */,
+				C26D2FD62DD72542006CE860 /* ToDo+CoreDataProperties.swift in Sources */,
 				C26390E72DD6185200DE5CA7 /* ToDoList.xcdatamodeld in Sources */,
 				C26391142DD61B1300DE5CA7 /* MainViewController.swift in Sources */,
 			);
